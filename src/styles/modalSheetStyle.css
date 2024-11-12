@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+.ReactModal__Overlay {
+  z-index: 99 !important;
+}
+
+.ReactModal__Content {
+  z-index: 99 !important;
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  position: relative;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.itemPackSizeBtn {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: transparent;
+  border: 0.5px solid rgb(213, 213, 213);
+}
+.itemDetail {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid rgb(226, 226, 226);
+}
+.itemImg {
+  width: 80px;
+
+  padding: 10px;
+  border: 0.5px solid rgb(226, 226, 226);
+  border-radius: 10px;
+}
+.itemImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+.itemDescription {
+  width: 240px;
+}
+.itemSizeOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 0.5px solid rgb(226, 226, 226);
+  margin-bottom: 6px;
+}
+.addItemBtn {
+  padding: 6px;
+  min-width: 52px;
+  border-radius: 4px;
+  background-color: #e5ffd197;
+  color: #37aa25;
+  font-family: "Bebas Neue";
+  font-size: 20px;
+  border: 0;
+}
+
+.quantityControl {
+  border: 2px solid #37aa25;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.quantityBtn {
+  flex: 1;
+  border: 0 transparent;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 0 8px;
+  color: #37aa25;
+  font-weight: bold;
+}

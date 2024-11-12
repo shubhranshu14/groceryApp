@@ -1,0 +1,19 @@
+.userInfoContainer {
+  height: 140px;
+  padding: 10px;
+  background-image: linear-gradient(#daffbd, #37aa25);
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  border-radius: 6px;
+}
+.userInfo {
+  color: #464646;
+}
+.userOptions {
+  margin-top: 10px;
+}
+.option {
+  border-bottom: 1px solid #929292;
+  margin-bottom: 10px;
+}
