@@ -16,6 +16,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { History, LocationOnOutlined, LogoutOutlined } from "@mui/icons-material";
 import SimpleSnackbar from "../components/snackBar";
+import { useSnackBar } from "../context/snackBarContext";
 
 
 
@@ -26,9 +27,7 @@ function UserProfileScreen() {
     const userLoggIn = JSON.parse(localStorage.getItem("userLogedIn"));
     const [openLogoutAlert, setOpenLogoutAlert] = useState(false);
 
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarMsg, setSnackbarMsg] = useState("");
-    const [snackbarVariant, setSnackbarVariant] = useState("");
+    const { openSnackbar, setOpenSnackbar, snackbarMsg, setSnackbarMsg, snackbarVariant, setSnackbarVariant } = useSnackBar();
 
     const handleLogOut = () => {
         if (cart.length > 0) {

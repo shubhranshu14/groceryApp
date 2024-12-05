@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "../styles/home.css";
-import { Search, LocalMall, Home } from "@mui/icons-material";
+import { Search, LocalMall, Home, LocationOnOutlined, ModelTraining } from "@mui/icons-material";
 import { InputAdornment, TextField } from "@mui/material";
 import CarouselComponent from "../components/carousel";
 import { useCart } from "../context/cartContext";
 import { useNavigate } from "react-router-dom";
+import ModalSheetLocation from "../components/modalSheetLocation";
+import { useUser } from "../context/userContext";
+import ModalSheetLogin from "../components/modalSheetLogin";
+import { useSnackBar } from "../context/snackBarContext";
+import { MyMapComponent } from "../components/mockMap";
+
 
 function HomeScreen() {
 
@@ -12,6 +18,10 @@ function HomeScreen() {
 
     const { cart } = useCart();
     const [cartSize, setCartSize] = useState(() => cart.length);
+    const [islocationModalOpen, setIslocationModalOpen] = useState(false);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
+    const { user, userLocation, userAddress } = useUser();
 
     useEffect(() => {
         setCartSize(cart.length);
@@ -52,19 +62,50 @@ function HomeScreen() {
         },
     ]
 
+    const handleGetLocation = () => {
+        if (!user) {
+
+            setIsLoginModalOpen(true);
+            setOpenSnackbar(true);
+            setSnackbarMsg("Need to login first");
+            setSnackbarVariant("info");
+            return;
+        }
+        setIslocationModalOpen(true);
+    }
+
 
     const handleButtonClick = (index) => {
         console.log(`Button on Slide ${index + 1} clicked!`);
         // Add logic for the button click
     };
 
+
     return (
         <div className="home">
             <div className="homeContainer1">
-                <div id="location">
-                    <h4>121 nai basti</h4>
-                    <p>Your Location</p>
+                <div id="location" className="flex" onClick={handleGetLocation}>
+                    {
+                        (user !== null && user?.userAddress?.place?.length !== 0) ? (
+                            <div>
+                                <h4>{user?.userAddress?.place}</h4>
+                                <p>Your Location</p>
+                            </div>
+                        ) : (
+                            <h4>Add Your Location</h4>
+                        )
+                    }
+
+                    <LocationOnOutlined />
                 </div>
+                {
+                    islocationModalOpen ?
+                        <ModalSheetLocation setIslocationModalOpen={setIslocationModalOpen} /> : null
+                }
+                {
+                    isLoginModalOpen ?
+                        <ModalSheetLogin setIsLoginModalOpen={setIsLoginModalOpen} /> : null
+                }
                 <div id="cart" onClick={() => navigate("/cart")}>
                     <LocalMall sx={{ color: "#37AA25" }} />
                     <h2 style={{ color: "#37AA25", fontFamily: "Bebas Neue, sans-serif", fontWeight: "bold" }}>{cartSize !== 0 && cartSize < 10 ? 0 : null}{cartSize}</h2>
@@ -123,8 +164,7 @@ function HomeScreen() {
                 </CarouselComponent>
 
             </div>
-
-        </div>
+        </div >
     )
 }
 

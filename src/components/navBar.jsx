@@ -6,8 +6,6 @@ import { useNavigate } from "react-router-dom";
 export default function NavBar() {
     const navigate = useNavigate();
     const [currTab, setCurrTab] = useState(() => {
-        console.log("this is called");
-
         const tabSeleted = localStorage.getItem("tabName");
         if (tabSeleted)
             return tabSeleted;
@@ -29,7 +27,7 @@ export default function NavBar() {
             return navigate("/");
         navigate(`/${tabName}`);
     };
-    console.log("curr tab from navbar", currTab);
+    // console.log("curr tab from navbar", currTab);
 
 
     return (

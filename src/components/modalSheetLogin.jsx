@@ -8,25 +8,36 @@ import "../styles/modalSheetStyle.css";
 import { auth, provider } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
 
-import SimpleSnackbar from './snackBar';
 import { useNavigate } from 'react-router-dom';
+import { userLogin, userSignUp } from '../api/user';
+import { useUser } from '../context/userContext';
+import { useSnackBar } from '../context/snackBarContext';
+import { LoadingButton } from '@mui/lab';
 
 Modal.setAppElement('#root'); // Necessary for accessibility
 
-export default function ModalSheetLogin({ setOpenSnackbar, setSnackbarMsg, setSnackbarVariant, closedFromProfile }) {
+export default function ModalSheetLogin({ setIsLoginModalOpen, closedFromProfile }) {
 
     const navigate = useNavigate();
+    const { login } = useUser();
 
     const [isOpen, setOpen] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
 
+    const [loading, setLoading] = useState(false);
     const [userWantsLogIn, setUserWantsLogIn] = useState(true);
     const [userValue, setUserValue] = useState({
-        name: '',
+        userName: '',
         email: '',
         password: '',
     })
     const [error, setError] = useState(false);
+    const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
+
+    const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    const isValidPassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+
 
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -60,40 +71,69 @@ export default function ModalSheetLogin({ setOpenSnackbar, setSnackbarMsg, setSn
             localStorage.setItem("tabName", "home");
             localStorage.setItem("backToTab", "home");
         }
+        if (setIsLoginModalOpen) {
+            setIsLoginModalOpen(false);
+        }
         setOpen(false);
 
     }
 
 
-    const handleSubmitSignUp = () => {
+    const handleSubmitSignUp = async () => {
 
-        if (!userValue.name || !userValue.email || !userValue.password) {
+        if (!userValue.userName || !userValue.email || !userValue.password) {
             setOpenSnackbar(true);
             setSnackbarMsg("Feilds should not be Empty!")
             setSnackbarVariant("error");
             return;
         }
 
+        if (!isValidEmail(userValue.email)) {
+            setOpenSnackbar(true);
+            setSnackbarMsg("Invalid email format!");
+            setSnackbarVariant("error");
+            return;
+        }
 
-        createUserWithEmailAndPassword(auth, userValue.email, userValue.password)
-            .then(async (res) => {
-                setOpenSnackbar(true);
-                setSnackbarMsg("Welcome! Your signup was successful.")
-                setSnackbarVariant("success");
-                const user = res.user;
-                await updateProfile(user, { displayName: userValue.name });
-                console.log("new one user", user);
-            })
-            .catch((err) => {
-                setOpenSnackbar(true);
-                setSnackbarMsg(err.message)
-                setSnackbarVariant("error");
-                console.error(err);
+        if (!isValidPassword(userValue.password)) {
+            setOpenSnackbar(true);
+            setSnackbarMsg(
+                "Password must be at least 8 characters long, include one uppercase letter, one lowercase letter, one number, and one special character."
+            );
+            setSnackbarVariant("error");
+            return;
+        }
 
+        try {
+            setLoading(true);
+            const res = await userSignUp(userValue);
+
+            if (!res.success) {
+                throw new Error(res.message || "Signup failed");
+            }
+            localStorage.setItem("authToken", res?.data?.token);
+            login({
+                userName: res?.data?.userName,
+                userPhoto: res?.data?.photoURL || "",
+                userUid: res?.data?._id,
+                userEmail: res?.data?.email || "",
+                userNumber: res?.data?.phoneNumber || "",
             });
+            setOpen(false);
+
+        } catch (error) {
+            setLoading(false);
+            setOpenSnackbar(true);
+            setSnackbarMsg(error.message)
+            setSnackbarVariant("error");
+            console.error(error);
+        }
+
+
+
     };
 
-    const handleSubmtLogin = () => {
+    const handleSubmtLogin = async () => {
 
         if (!userValue.email || !userValue.password) {
             setOpenSnackbar(true);
@@ -102,21 +142,105 @@ export default function ModalSheetLogin({ setOpenSnackbar, setSnackbarMsg, setSn
             return;
         }
 
+        if (!isValidEmail(userValue.email)) {
+            setOpenSnackbar(true);
+            setSnackbarMsg("Invalid email format!");
+            setSnackbarVariant("error");
+            return;
+        }
 
-        signInWithEmailAndPassword(auth, userValue.email, userValue.password)
-            .then(async (res) => {
-                setOpenSnackbar(true);
-                setSnackbarMsg("Welcome back! You're logged in.")
-                setSnackbarVariant("success");
-            })
-            .catch((err) => {
-                setOpenSnackbar(true);
-                setSnackbarMsg(err.message)
-                setSnackbarVariant("error");
-                console.error(err);
+        const userData = {
+            email: userValue.email,
+            password: userValue.password
+        }
+        try {
+            setLoading(true);
+            const res = await userLogin(userData);
+            if (!res.success) {
+                throw new Error(res.message || "Login failed");
+            }
 
+            localStorage.setItem("authToken", res?.data?.token);
+            login({
+                userName: res?.data?.userName,
+                userPhoto: res?.data?.photoURL || "",
+                userUid: res?.data?._id,
+                userEmail: res?.data?.email || "",
+                userNumber: res?.data?.phoneNumber || "",
+                userAddress: res?.data?.address || {
+                    place: '',
+                    coordinates: {
+                        latitude: null,
+                        longitude: null
+                    }
+                }
             });
+            setOpenSnackbar(true);
+            setSnackbarMsg("Welcome back! You're logged in.")
+            setSnackbarVariant("success");
+            setOpen(false);
+
+        } catch (err) {
+            setLoading(false);
+            setOpenSnackbar(true);
+            setSnackbarMsg(err.message)
+            setSnackbarVariant("error");
+            console.error(err);
+        }
     };
+
+    // const handleSubmitSignUp = () => {
+
+    //     if (!userValue.userName || !userValue.email || !userValue.password) {
+    //         setOpenSnackbar(true);
+    //         setSnackbarMsg("Feilds should not be Empty!")
+    //         setSnackbarVariant("error");
+    //         return;
+    //     }
+
+    //     createUserWithEmailAndPassword(auth, userValue.email, userValue.password)
+    //         .then(async (res) => {
+    //             setOpenSnackbar(true);
+    //             setSnackbarMsg("Welcome! Your signup was successful.")
+    //             setSnackbarVariant("success");
+    //             const user = res.user;
+    //             await updateProfile(user, { displayName: userValue.userName });
+    //             console.log("new one user", user);
+    //         })
+    //         .catch((err) => {
+    //             setOpenSnackbar(true);
+    //             setSnackbarMsg(err.message)
+    //             setSnackbarVariant("error");
+    //             console.error(err);
+
+    //         });
+    // };
+
+    // const handleSubmtLogin = () => {
+
+    //     if (!userValue.email || !userValue.password) {
+    //         setOpenSnackbar(true);
+    //         setSnackbarMsg("Feilds should not be Empty!")
+    //         setSnackbarVariant("error");
+    //         return;
+    //     }
+
+
+    //     signInWithEmailAndPassword(auth, userValue.email, userValue.password)
+    //         .then(async (res) => {
+    //             setOpenSnackbar(true);
+    //             setSnackbarMsg("Welcome back! You're logged in.")
+    //             setSnackbarVariant("success");
+    //         })
+    //         .catch((err) => {
+    //             setOpenSnackbar(true);
+    //             setSnackbarMsg(err.message)
+    //             setSnackbarVariant("error");
+    //             console.error(err);
+
+    //         });
+    // };
+
 
 
 
@@ -150,7 +274,23 @@ export default function ModalSheetLogin({ setOpenSnackbar, setSnackbarMsg, setSn
                     <div className='itemDetail' style={{ flexDirection: "column", alignItems: "center" }}>
                         <div className='itemDescription' style={{ textAlign: "center" }}>
                             <Typography variant="h6" sx={{ fontSize: "18px" }}>
-                                <span onClick={() => setUserWantsLogIn(true)} style={{ fontWeight: userWantsLogIn ? "bold" : "normal", fontSize: userWantsLogIn ? "24px" : "16px" }}>LogIn</span> / <span onClick={() => setUserWantsLogIn(false)} style={{ fontWeight: !userWantsLogIn ? "bold" : "normal", fontSize: !userWantsLogIn ? "24px" : "14px" }}>SignUp</span>
+                                <span onClick={() => {
+                                    setUserValue({
+                                        userName: '',
+                                        email: '',
+                                        password: '',
+                                    });
+                                    setUserWantsLogIn(true)
+
+                                }} style={{ fontWeight: userWantsLogIn ? "bold" : "normal", fontSize: userWantsLogIn ? "24px" : "16px" }}>LogIn</span> / <span onClick={() => {
+                                    setUserValue({
+                                        userName: '',
+                                        email: '',
+                                        password: '',
+                                    });
+                                    setUserWantsLogIn(false)
+
+                                }} style={{ fontWeight: !userWantsLogIn ? "bold" : "normal", fontSize: !userWantsLogIn ? "24px" : "14px" }}>SignUp</span>
                             </Typography>
                             <Typography sx={{ fontSize: "12px" }} color="text.secondary">
                                 Get Started & grab best offers!
@@ -208,7 +348,7 @@ export default function ModalSheetLogin({ setOpenSnackbar, setSnackbarMsg, setSn
                                 </FormControl>
 
 
-                                <Button variant='contained' sx={{ height: "56px", marginTop: "10px" }} onClick={handleSubmtLogin}>LogIn</Button>
+                                <LoadingButton loading={loading} variant='contained' sx={{ height: "56px", marginTop: "10px" }} onClick={handleSubmtLogin}>LogIn</LoadingButton>
                             </div>
 
                         ) : (
@@ -218,10 +358,10 @@ export default function ModalSheetLogin({ setOpenSnackbar, setSnackbarMsg, setSn
                                     <TextField
                                         label="Name"
                                         id="outlined-email"
-                                        value={userValue.name}
+                                        value={userValue.userName}
                                         onChange={(e) => setUserValue((prev) => ({
                                             ...prev,
-                                            name: e.target.value
+                                            userName: e.target.value
                                         }))}
                                         error={error}
 
@@ -274,7 +414,7 @@ export default function ModalSheetLogin({ setOpenSnackbar, setSnackbarMsg, setSn
                                 </FormControl>
 
 
-                                <Button variant='contained' sx={{ height: "56px", marginTop: "10px" }} onClick={handleSubmitSignUp}>SignUp</Button>
+                                <LoadingButton loading={loading} variant='contained' sx={{ height: "56px", marginTop: "10px" }} onClick={handleSubmitSignUp}>SignUp</LoadingButton>
                             </div>
 
                         )

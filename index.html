@@ -11,6 +11,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <script type="module">
+      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+      if (apiKey) {
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+        document.body.appendChild(script);
+      } else {
+        console.error("Google Maps API key is missing!");
+      }
+    </script>
 
     <script type="module" src="/src/main.jsx"></script>
   </body>

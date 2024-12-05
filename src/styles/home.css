@@ -51,6 +51,14 @@
   flex: 2;
 }
 
+#location h4 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 160px;
+  margin: 0;
+}
+
 #location p {
   font-size: 10px;
 }

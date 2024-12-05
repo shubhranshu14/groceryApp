@@ -4,16 +4,19 @@ import App from './App.jsx'
 import MobileOnlyWrapper from './components/mobileOnlyWrapper.jsx'
 import { CartProvider } from './context/cartContext.jsx'
 import { UserProvider } from './context/userContext.jsx'
+import { SnackbarProvider } from './context/snackBarContext.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <MobileOnlyWrapper>
-      <UserProvider>
-        <CartProvider>
-          <App />
-        </CartProvider>
-      </UserProvider>
+      <CartProvider>
+        <UserProvider>
+          <SnackbarProvider>
+            <App />
+          </SnackbarProvider>
+        </UserProvider>
+      </CartProvider>
     </MobileOnlyWrapper>
   </StrictMode>,
 )

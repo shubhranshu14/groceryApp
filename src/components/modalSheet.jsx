@@ -7,6 +7,8 @@ import { useCart } from '../context/cartContext';
 import "../styles/modalSheetStyle.css";
 import { useUser } from '../context/userContext';
 import { useNavigate } from 'react-router-dom';
+import ModalSheetGoogleLocation from './modalGoogleMaps';
+import { useSnackBar } from '../context/snackBarContext';
 
 Modal.setAppElement('#root'); // Necessary for accessibility
 
@@ -16,6 +18,7 @@ export default function ModalSheetBottom({ currItemSize, item }) {
     const [isOpen, setOpen] = useState(false);
     const { user } = useUser();
 
+    const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
 
     const looseItem = false;
     // Spring animation for the sheet
@@ -28,9 +31,18 @@ export default function ModalSheetBottom({ currItemSize, item }) {
     const { cart, addToCart, increaseQuantity, decreaseQuantity, getQuantity } = useCart();
 
     const handleAddItem = (item, size, price, looseItem) => {
-        if (user) {
+        if (user && user.userAddress?.place != '') {
             addToCart(item, size, price, looseItem);
+        } else if (user && user.userAddress?.place == '') {
+            setOpenSnackbar(true);
+            setSnackbarMsg("Need to add your location!");
+            setSnackbarVariant("info");
+            navigate("/");
+            localStorage.setItem("tabName", "home");
         } else {
+            setOpenSnackbar(true);
+            setSnackbarMsg("Login to start shopping!");
+            setSnackbarVariant("info");
             navigate("/user");
             localStorage.setItem("tabName", "user");
         }
@@ -119,6 +131,7 @@ export default function ModalSheetBottom({ currItemSize, item }) {
                     </div>
                 </animated.div>
             </Modal >
+
         </>
     );
 }

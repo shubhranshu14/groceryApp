@@ -24,8 +24,6 @@ export default function LogoutAlertDialog({ open, setOpen, setOpenSnackbar, setS
                 setOpenSnackbar(true);
                 setSnackbarMsg("You're now logged out. Take care!");
                 setSnackbarVariant("info");
-                localStorage.setItem("cart", JSON.stringify([]));
-                setCart([]);
                 setOpen(false);
                 logout();
                 console.log("user after logout", user);

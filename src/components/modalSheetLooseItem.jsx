@@ -5,19 +5,26 @@ import Modal from 'react-modal';
 import { animated, useSpring } from 'react-spring';
 import { useCart } from '../context/cartContext';
 import "../styles/modalSheetStyle.css";
+import { useUser } from '../context/userContext';
+import { useSnackBar } from '../context/snackBarContext';
+import { useNavigate } from 'react-router-dom';
 
 Modal.setAppElement('#root');
 
 export default function ModalSheetLooseItem({ currItemSize, item }) {
+
+    const navigate = useNavigate();
     const [isOpen, setOpen] = useState(false);
 
     const { cart, addToCart, decreaseQuantity, getQuantity } = useCart();
+    const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
+    const { user } = useUser();
 
     const looseItem = true;
 
     const [selectedSize, setSelectedSize] = useState(() => {
         const itemInCart = cart.find(cartItem => cartItem.itemId === item.itemId);
-        return itemInCart ? Number(itemInCart.selectedSize) : 1; // Ensure it's a number
+        return itemInCart ? itemInCart.selectedSize : '1 Kg'; // Ensure it's a number
     }); // Default size
     const springProps = useSpring({
         opacity: isOpen ? 1 : 0,
@@ -39,6 +46,25 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
         return item.itemBasePricePerKg * parseFloat(selectedSize);
     };
 
+    const handleCheckUserBeforeAddItem = () => {
+        if (user && user.userAddress?.place != '') {
+            handleAddOrRemove();
+            console.log("user from cart", user)
+        } else if (user && user.userAddress?.place == '') {
+            setOpenSnackbar(true);
+            setSnackbarMsg("Need to add your location!");
+            setSnackbarVariant("info");
+            navigate("/");
+            localStorage.setItem("tabName", "home");
+        } else {
+            setOpenSnackbar(true);
+            setSnackbarMsg("Login to start shopping!");
+            setSnackbarVariant("info");
+            navigate("/user");
+            localStorage.setItem("tabName", "user");
+        }
+    }
+
     const handleAddOrRemove = () => {
         const itemInCart = cart.some(
             cartItem => cartItem.itemId === item.itemId
@@ -55,7 +81,7 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
         <>
             <button className='itemPackSizeBtn' onClick={() => setOpen(true)} >
                 <Typography variant="body2" color="text.secondary" noWrap>
-                    {currItemSize}
+                    {selectedSize}
                 </Typography>
                 <KeyboardArrowDown />
             </button>
@@ -101,9 +127,9 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
                             fullWidth
                             disabled={cart.some(cartItem => cartItem.itemId === item.itemId)}
                         >
-                            {sizes.map((size) => (
-                                <MenuItem key={size} value={size}>
-                                    {`${size} Kg`}
+                            {item.itemSizes.map((obj, idx) => (
+                                <MenuItem key={idx} value={obj.size}>
+                                    {obj.size}
                                 </MenuItem>
                             ))}
                         </TextField>
@@ -114,7 +140,7 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
 
                             <button
                                 className='addItemBtn'
-                                onClick={handleAddOrRemove}
+                                onClick={handleCheckUserBeforeAddItem}
                             >
                                 {cart.some(cartItem => cartItem.itemId === item.itemId) ? 'Remove Item' : 'Add to Cart'}
                             </button>
