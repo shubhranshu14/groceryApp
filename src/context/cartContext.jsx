@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useSnackBar } from "./snackBarContext";
 
 // Create the Context
 const CartContext = createContext();
@@ -17,6 +18,8 @@ export const CartProvider = ({ children }) => {
 
   const [cart, setCart] = useState(getCartFromStorage);
 
+  const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
+
   // Save cart data to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -27,7 +30,7 @@ export const CartProvider = ({ children }) => {
     let updatedCart = [...cart];
     const cartItemIndex = updatedCart.findIndex(
       (item) =>
-        item.itemId === product.itemId && item.selectedSize === selectedSize
+        item.itemId === product._id && item.selectedSize === selectedSize
     );
 
     if (cartItemIndex > -1) {
@@ -37,13 +40,17 @@ export const CartProvider = ({ children }) => {
         updatedCart[cartItemIndex].totalPrice =
           updatedCart[cartItemIndex].quantity *
           updatedCart[cartItemIndex].pricePerUnit;
+        // console.log("kkk");
+
       } else {
-        alert("Maximum quantity reached for this item.");
+        setOpenSnackbar(true);
+        setSnackbarMsg("Maximum quantity reached for this item.")
+        setSnackbarVariant("info");
       }
     } else {
       // Add new item if not in cart
       updatedCart.push({
-        itemId: product.itemId,
+        itemId: product._id,
         itemImg: product.itemImageURL,
         itemName: product.itemName,
         selectedSize,
@@ -62,7 +69,7 @@ export const CartProvider = ({ children }) => {
     let updatedCart = [...cart];
     const cartItemIndex = updatedCart.findIndex(
       (item) =>
-        item.itemId === product.itemId && item.selectedSize === selectedSize
+        item.itemId === (product.itemId || product._id) && item.selectedSize === selectedSize
     );
 
     if (
@@ -74,6 +81,10 @@ export const CartProvider = ({ children }) => {
         updatedCart[cartItemIndex].quantity *
         updatedCart[cartItemIndex].pricePerUnit;
       setCart(updatedCart);
+    } else {
+      setOpenSnackbar(true);
+      setSnackbarMsg("Maximum quantity reached for this item.")
+      setSnackbarVariant("info");
     }
   };
 
@@ -82,7 +93,7 @@ export const CartProvider = ({ children }) => {
     let updatedCart = [...cart];
     const cartItemIndex = updatedCart.findIndex(
       (item) =>
-        item.itemId === product.itemId && item.selectedSize === selectedSize
+        item.itemId === (product.itemId || product._id) && item.selectedSize === selectedSize
     );
 
     if (cartItemIndex > -1) {
@@ -102,7 +113,7 @@ export const CartProvider = ({ children }) => {
   const getQuantity = (product, selectedSize) => {
     const cartItem = cart.find(
       (item) =>
-        item.itemId === product.itemId && item.selectedSize === selectedSize
+        item.itemId === (product.itemId || product._id) && item.selectedSize === selectedSize
     );
     return cartItem ? cartItem.quantity : 0;
   };

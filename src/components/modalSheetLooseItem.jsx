@@ -23,7 +23,7 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
     const looseItem = true;
 
     const [selectedSize, setSelectedSize] = useState(() => {
-        const itemInCart = cart.find(cartItem => cartItem.itemId === item.itemId);
+        const itemInCart = cart.find(cartItem => cartItem.itemId === item._id);
         return itemInCart ? itemInCart.selectedSize : '1 Kg'; // Ensure it's a number
     }); // Default size
     const springProps = useSpring({
@@ -39,7 +39,6 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
         };
     }, [isOpen]);
 
-    const sizes = [0.5, 0.75, 1, 1.5, 2, 2.5, 3]; // in Kg
 
     // Calculate price based on selected size
     const calculatePrice = () => {
@@ -67,7 +66,7 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
 
     const handleAddOrRemove = () => {
         const itemInCart = cart.some(
-            cartItem => cartItem.itemId === item.itemId
+            cartItem => cartItem.itemId === item._id
         );
 
         if (itemInCart) {
@@ -125,7 +124,7 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
                             onChange={(e) => setSelectedSize(e.target.value)}
                             variant="outlined"
                             fullWidth
-                            disabled={cart.some(cartItem => cartItem.itemId === item.itemId)}
+                            disabled={cart.some(cartItem => cartItem.itemId === item._id)}
                         >
                             {item.itemSizes.map((obj, idx) => (
                                 <MenuItem key={idx} value={obj.size}>
@@ -142,7 +141,7 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
                                 className='addItemBtn'
                                 onClick={handleCheckUserBeforeAddItem}
                             >
-                                {cart.some(cartItem => cartItem.itemId === item.itemId) ? 'Remove Item' : 'Add to Cart'}
+                                {cart.some(cartItem => cartItem.itemId === item._id) ? 'Remove Item' : 'Add to Cart'}
                             </button>
 
                         </div>

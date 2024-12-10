@@ -15,6 +15,7 @@ import { getUser } from '../api/user';
 import ModalSheetLocation from '../components/modalSheetLocation';
 import { useSnackBar } from '../context/snackBarContext';
 import SimpleSnackbar from '../components/snackBar';
+import UserOrderScreen from './userOrderScreen';
 
 function AppRoutes() {
     const location = useLocation();
@@ -109,6 +110,7 @@ function AppRoutes() {
                 <Route path="/category/:categoryTitle" element={<ProductListScreen />} />
                 <Route path="/cart" element={<CartScreen />} />
                 <Route path="/user" element={<UserProfileScreen />} />
+                <Route path="/user/myOrder" element={<UserOrderScreen />} />
             </Routes>
         </>
     );

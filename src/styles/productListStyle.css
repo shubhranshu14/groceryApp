@@ -33,5 +33,9 @@
 
 #item {
   text-align: center;
-  flex: 2;
+  flex: 3;
+}
+#hiddenDiv {
+  flex: 1;
+  height: 40px;
 }

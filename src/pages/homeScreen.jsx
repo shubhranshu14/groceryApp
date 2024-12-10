@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "../styles/home.css";
-import { Search, LocalMall, Home, LocationOnOutlined, ModelTraining } from "@mui/icons-material";
-import { InputAdornment, TextField } from "@mui/material";
+import { Search, LocalMall, LocationOnOutlined } from "@mui/icons-material";
+import { InputAdornment, Skeleton, TextField } from "@mui/material";
 import CarouselComponent from "../components/carousel";
 import { useCart } from "../context/cartContext";
 import { useNavigate } from "react-router-dom";
@@ -9,163 +9,155 @@ import ModalSheetLocation from "../components/modalSheetLocation";
 import { useUser } from "../context/userContext";
 import ModalSheetLogin from "../components/modalSheetLogin";
 import { useSnackBar } from "../context/snackBarContext";
-import { MyMapComponent } from "../components/mockMap";
+import { getProductCategory } from "../api/product";
 
+// Component for displaying location
+const LocationSection = ({ user, handleGetLocation }) => (
+    <div id="location" className="flex" onClick={handleGetLocation}>
+        {user?.userAddress?.place ? (
+            <div>
+                <h4>{user.userAddress.place}</h4>
+                <p>Your Location</p>
+            </div>
+        ) : (
+            <h4>Add Your Location</h4>
+        )}
+        <LocationOnOutlined />
+    </div>
+);
+
+// Component for displaying the cart icon and size
+const CartIcon = ({ cartSize, navigate }) => (
+    <div id="cart" onClick={() => navigate("/cart")}>
+        <LocalMall sx={{ color: "#37AA25" }} />
+        {cartSize > 0 && <h2 className="cartSize">{cartSize < 10 ? `0${cartSize}` : cartSize}</h2>}
+    </div>
+);
 
 function HomeScreen() {
-
     const navigate = useNavigate();
-
     const { cart } = useCart();
-    const [cartSize, setCartSize] = useState(() => cart.length);
-    const [islocationModalOpen, setIslocationModalOpen] = useState(false);
-    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
-    const { user, userLocation, userAddress } = useUser();
+    const { user } = useUser();
+
+    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [category, setCategory] = useState([]);
+    const [loadingCategory, setLoadingCategory] = useState(true);
+
+    const cartSize = useMemo(() => cart.length, [cart]);
 
     useEffect(() => {
-        setCartSize(cart.length);
-    }, [cart]);
-
-    const images = [
-        '/images/coffeeThumb.webp',
-        '/images/morningStarterThumb.webp',
-        '/images/cleanerThumb.webp',
-        '/images/freshenerThumb.webp',
-        '/images/stationeryThumb.webp',
-    ];
-
-    const category = [
-        {
-            img: "/images/categoryDrinks.png",
-            link: "drinks",
-        },
-        {
-            img: "/images/categoryDairy.png",
-            link: "dairy&Bakery",
-        },
-        {
-            img: "/images/categoryPulses.png",
-            link: "lentils&Pulses",
-        },
-        {
-            img: "/images/categoryEdibleOil.png",
-            link: "edibleOils&Ghee",
-        },
-        {
-            img: "/images/categoryHousehold.png",
-            link: "houseHoldEssentials",
-        },
-        {
-            img: "/images/categoryPersonalCare.png",
-            link: "personalCare",
-        },
-    ]
+        const fetchCategories = async () => {
+            setLoadingCategory(true);
+            try {
+                const res = await getProductCategory();
+                if (!res.success) throw new Error(res.message);
+                setCategory(res.data);
+            } catch (err) {
+                console.error("Failed to fetch categories:", err.message);
+            }
+            finally {
+                setLoadingCategory(false);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     const handleGetLocation = () => {
         if (!user) {
-
             setIsLoginModalOpen(true);
             setOpenSnackbar(true);
             setSnackbarMsg("Need to login first");
             setSnackbarVariant("info");
             return;
         }
-        setIslocationModalOpen(true);
-    }
-
-
-    const handleButtonClick = (index) => {
-        console.log(`Button on Slide ${index + 1} clicked!`);
-        // Add logic for the button click
+        setIsLocationModalOpen(true);
     };
 
+    const images = [
+        "/images/coffeeThumb.webp",
+        "/images/morningStarterThumb.webp",
+        "/images/cleanerThumb.webp",
+        "/images/freshenerThumb.webp",
+        "/images/stationeryThumb.webp",
+    ];
 
     return (
         <div className="home">
             <div className="homeContainer1">
-                <div id="location" className="flex" onClick={handleGetLocation}>
-                    {
-                        (user !== null && user?.userAddress?.place?.length !== 0) ? (
-                            <div>
-                                <h4>{user?.userAddress?.place}</h4>
-                                <p>Your Location</p>
-                            </div>
-                        ) : (
-                            <h4>Add Your Location</h4>
-                        )
-                    }
-
-                    <LocationOnOutlined />
-                </div>
-                {
-                    islocationModalOpen ?
-                        <ModalSheetLocation setIslocationModalOpen={setIslocationModalOpen} /> : null
-                }
-                {
-                    isLoginModalOpen ?
-                        <ModalSheetLogin setIsLoginModalOpen={setIsLoginModalOpen} /> : null
-                }
-                <div id="cart" onClick={() => navigate("/cart")}>
-                    <LocalMall sx={{ color: "#37AA25" }} />
-                    <h2 style={{ color: "#37AA25", fontFamily: "Bebas Neue, sans-serif", fontWeight: "bold" }}>{cartSize !== 0 && cartSize < 10 ? 0 : null}{cartSize}</h2>
-                </div>
+                <LocationSection user={user} handleGetLocation={handleGetLocation} />
+                <CartIcon cartSize={cartSize} navigate={navigate} />
             </div>
-            <div className="searchBar" style={{ width: "100%", margin: "10px 0" }}>
+
+            {isLocationModalOpen && <ModalSheetLocation setIslocationModalOpen={setIsLocationModalOpen} />}
+            {isLoginModalOpen && <ModalSheetLogin setIsLoginModalOpen={setIsLoginModalOpen} />}
+
+            <div className="searchBar">
                 <TextField
                     id="outlined-start-adornment"
                     placeholder="Search"
                     sx={{
-                        '& .MuiOutlinedInput-root': {
-                            borderRadius: '10px',
-                            backgroundColor: 'white'
-                        },
-                        width: '100%',
+                        "& .MuiOutlinedInput-root": { borderRadius: "10px", backgroundColor: "white" },
+                        width: "100%",
                     }}
-                    slotProps={{
-                        input: {
-                            endAdornment: <InputAdornment position="end"><Search /></InputAdornment>,
-                        },
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <Search />
+                            </InputAdornment>
+                        ),
                     }}
                 />
             </div>
-            <div className="imageTab1">
-                <img style={{ height: "100%", width: "100%", borderRadius: "6px" }} src="/images/freeDelivery.png" alt="Free Delivery" />
-            </div>
-            <div className="category margin-top20">
-                <div className="flex js_bw">
-                    <h4>Category</h4>
-                </div>
-                <div className="flex itemContainer">
-                    {category.map((item, idx) =>
-                        <div key={idx} className="categoryItem" onClick={() => navigate(`/category/${item.link}`)}>
-                            <img style={{ height: "100%", width: "100%", borderRadius: "8px" }} src={item.img} alt="Free Delivery" />
-                        </div>
 
-                    )}
-                </div>
+            <div className="imageTab1">
+                <img className="fullWidthImage" src="/images/freeDelivery.png" alt="Free Delivery" />
             </div>
+
+
+            <div className="category margin-top20">
+                <h4>Category</h4>
+                {loadingCategory ? (
+                    <div className="flex itemContainer">
+                        {
+                            Array(6).fill().map((_, idx) =>
+                                <div key={idx} className="categoryItem">
+                                    <Skeleton variant="rectangle" sx={{ height: "100%" }} />
+                                </div>
+                            )
+                        }
+                    </div>
+                ) :
+                    (<div className="flex itemContainer">
+                        {category.map((item, idx) => (
+                            <div key={idx} className="categoryItem" onClick={() => navigate(`/category/${item.categoryName}`)}>
+                                <img className="categoryImage" src={item.categoryImage} alt={item.categoryName} />
+                            </div>
+                        ))}
+                    </div>)}
+            </div>
+
             <div className="banner margin-top20">
-                <img style={{ position: "absolute", width: "110px", right: 0, borderTopRightRadius: "6px" }} src="/images/havmorIceCreamLogo.png" />
-                <img className="bannerImg" src="/images/havmoreIceCreamBanner.png" />
+                <img className="bannerLogo" src="/images/havmorIceCreamLogo.png" alt="Havmor Logo" />
+                <img className="bannerImg" src="/images/havmoreIceCreamBanner.png" alt="Havmor Banner" />
             </div>
 
             <div className="quickBites margin-top20">
-                <h4 style={{ marginBottom: "10px" }}>What you need today</h4>
+                <h4>What you need today</h4>
                 <CarouselComponent>
                     {images.map((src, index) => (
                         <div key={index} className="slideDiv">
                             <img src={src} alt={`Slide ${index + 1}`} />
-                            <button className="slideBtn" onClick={() => handleButtonClick(index)}>
+                            <button className="slideBtn" onClick={() => console.log(`Button on Slide ${index + 1} clicked!`)}>
                                 View Item
                             </button>
                         </div>
                     ))}
                 </CarouselComponent>
-
             </div>
-        </div >
-    )
+        </div>
+    );
 }
 
 export default HomeScreen;

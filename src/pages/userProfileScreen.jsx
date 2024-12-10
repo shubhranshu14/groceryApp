@@ -29,6 +29,11 @@ function UserProfileScreen() {
 
     const { openSnackbar, setOpenSnackbar, snackbarMsg, setSnackbarMsg, snackbarVariant, setSnackbarVariant } = useSnackBar();
 
+
+    const handleNavigate = (route) => {
+        navigate(`${route}`);
+    }
+
     const handleLogOut = () => {
         if (cart.length > 0) {
             setOpenLogoutAlert(true);
@@ -65,7 +70,7 @@ function UserProfileScreen() {
                         </div>
                         <div className="userOptions">
                             <div className="option">
-                                <Button size="large" sx={{ color: "#464646" }} className="userOptionBtn" startIcon={<History />}>My Orders</Button>
+                                <Button size="large" sx={{ color: "#464646" }} onClick={() => handleNavigate("myOrder")} className="userOptionBtn" startIcon={<History />}>My Orders</Button>
                             </div>
                             <div className="option">
                                 <Button size="large" sx={{ color: "#464646" }} startIcon={<LocationOnOutlined />}>My Address</Button>

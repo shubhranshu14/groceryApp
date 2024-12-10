@@ -11,15 +11,21 @@ import ModalSheetBottom from "../components/modalSheet";
 import TopBar from "../components/topBar";
 import { useCart } from "../context/cartContext";
 import AlertDialog from "../components/alertDialog";
+import { useSnackBar } from "../context/snackBarContext";
+import { createOrder } from "../api/product";
+import { LoadingButton } from "@mui/lab";
 
 function CartScreen() {
     const navigate = useNavigate();
 
-    const { cart, addToCart, increaseQuantity, decreaseQuantity, getQuantity } = useCart();
+    const { cart, setCart, addToCart, increaseQuantity, decreaseQuantity, getQuantity } = useCart();
+    const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
     const [cartSize, setCartSize] = useState(() => cart.length);
     const [totalPrice, setTotalPrice] = useState(0);
     const [itemToRemove, setItemToRemove] = useState({});
     const [openDialog, setOpenDialog] = useState(false);
+    const [orderData, setOrderData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setCartSize(cart.length);
@@ -44,6 +50,40 @@ function CartScreen() {
         localStorage.setItem("tabName", "home");
         localStorage.setItem("backToTab", "home");
 
+    }
+
+    const handlePlaceOrder = async () => {
+        setLoading(true);
+        const cart = localStorage.getItem('cart');
+        console.log("cart", cart);
+
+        if (cart) {
+            const orderData = JSON.parse(cart);
+
+            try {
+                const res = await createOrder({ orderData, totalPrice });
+                if (!res.success) {
+                    throw new Error(res.message);
+                }
+                setOpenSnackbar(true);
+                setSnackbarMsg("Order placed");
+                setSnackbarVariant("success");
+                setCart([]);
+                navigate("/user/myOrder");
+                localStorage.setItem('cart', JSON.stringify([]));
+
+            } catch (error) {
+                setOpenSnackbar(true);
+                setSnackbarMsg(error.message);
+                setSnackbarVariant("error");
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            setOpenSnackbar(true);
+            setSnackbarMsg("No product found");
+            setSnackbarVariant("error");
+        }
     }
 
     return (
@@ -100,7 +140,7 @@ function CartScreen() {
                             <h4>Total:</h4>
                             <h4>₹{totalPrice}</h4>
                         </div>
-                        <button className="orderBtn">Place Order</button>
+                        <LoadingButton loading={loading} variant="contained" onClick={handlePlaceOrder} className="orderBtn">Place Order</LoadingButton>
                     </div>
                 </>
             )}

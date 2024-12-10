@@ -6,7 +6,7 @@ import { LocalMall } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/cartContext";
 
-function TopBar({ screenName, backNavigateTo }) {
+function TopBar({ screenName, backNavigateTo, hideCartBtn }) {
     const navigate = useNavigate();
     const { cart } = useCart();
     const backToTab = localStorage.getItem("backToTab");
@@ -28,10 +28,15 @@ function TopBar({ screenName, backNavigateTo }) {
             <div id="item">
                 <h4 style={{ fontWeight: "bold", fontSize: "20px" }}>{screenName}</h4>
             </div>
-            <div id="listCart" onClick={() => navigate("/cart")}>
-                <LocalMall sx={{ color: "#37AA25" }} />
-                <h2 style={{ color: "#37AA25", fontFamily: "Bebas Neue, sans-serif", fontWeight: "bold" }}>{cartSize !== 0 && cartSize < 10 ? 0 : null}{cartSize}</h2>
-            </div>
+            {!hideCartBtn || false ?
+                <div id="listCart" onClick={() => navigate("/cart")}>
+                    <LocalMall sx={{ color: "#37AA25" }} />
+                    <h2 style={{ color: "#37AA25", fontFamily: "Bebas Neue, sans-serif", fontWeight: "bold" }}>{cartSize !== 0 && cartSize < 10 ? 0 : null}{cartSize}</h2>
+                </div> :
+                <div id="hiddenDiv">
+
+                </div>
+            }
         </div>
 
 

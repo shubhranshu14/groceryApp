@@ -10,13 +10,13 @@ import './index.css'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <MobileOnlyWrapper>
-      <CartProvider>
-        <UserProvider>
-          <SnackbarProvider>
+      <SnackbarProvider>
+        <CartProvider>
+          <UserProvider>
             <App />
-          </SnackbarProvider>
-        </UserProvider>
-      </CartProvider>
+          </UserProvider>
+        </CartProvider>
+      </SnackbarProvider>
     </MobileOnlyWrapper>
   </StrictMode>,
 )
