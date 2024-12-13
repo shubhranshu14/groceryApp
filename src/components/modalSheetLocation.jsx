@@ -35,10 +35,11 @@ export default function ModalSheetLocation({ setIslocationModalOpen }) {
     });
     const [userSearchLocation, setUserSearchLocation] = useState("");
     const [isGpsOpen, setIsGpsOpen] = useState(false);
+    const [locationBtnDisabled, setLocationBtnDisabled] = useState(true);
 
     const { getLocation, setUser } = useUser();
 
-
+    const authToken = localStorage.getItem('authToken');
     // Spring animation for the sheet
     const springProps = useSpring({
         opacity: isOpen ? 1 : 0,
@@ -76,6 +77,7 @@ export default function ModalSheetLocation({ setIslocationModalOpen }) {
                         latitude,
                         longitude
                     })
+                    setLocationBtnDisabled(false);
                     setIsGpsOpen(true);
                     // Proceed with your logic here, such as updating the state or sending coordinates to your backend.
                 },
@@ -122,7 +124,7 @@ export default function ModalSheetLocation({ setIslocationModalOpen }) {
                                         place: placeName,
                                         coordinates: currentCorrdinate
                                     }
-                                    const res = await updateUserAddress({ address });
+                                    const res = await updateUserAddress({ address }, authToken);
                                     if (!res.success) {
                                         throw Error(res.message);
                                     }
@@ -225,6 +227,7 @@ export default function ModalSheetLocation({ setIslocationModalOpen }) {
 
             const { lat, lng } = result.geometry.location;
             setUserSearchLocation(selectedPlace);
+            setLocationBtnDisabled(false);
             setCurrentCorrdinate({ latitude: lat(), longitude: lng() });
 
         } catch (error) {
@@ -289,7 +292,7 @@ export default function ModalSheetLocation({ setIslocationModalOpen }) {
                         ) : (
                             <Skeleton animation="wave" variant="rectangular" width="100%" height="100%" />
                         )}
-                        <LoadingButton loading={loading} variant='contained' onClick={handleUseCurrentLocation} >Confirm</LoadingButton>
+                        {currentCorrdinate.latitude !== null && <LoadingButton loading={loading} variant='contained' disabled={locationBtnDisabled} onClick={handleUseCurrentLocation} >Confirm</LoadingButton>}
 
                     </div>
 

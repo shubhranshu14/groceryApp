@@ -11,7 +11,7 @@ import { useUser } from "../context/userContext";
 import { useCart } from "../context/cartContext";
 
 import TopBar from "../components/topBar";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Button, Skeleton } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { History, LocationOnOutlined, LogoutOutlined } from "@mui/icons-material";
@@ -26,6 +26,7 @@ function UserProfileScreen() {
     const { cart } = useCart();
     const userLoggIn = JSON.parse(localStorage.getItem("userLogedIn"));
     const [openLogoutAlert, setOpenLogoutAlert] = useState(false);
+    const [loadingName, setLoadingName] = useState(false);
 
     const { openSnackbar, setOpenSnackbar, snackbarMsg, setSnackbarMsg, snackbarVariant, setSnackbarVariant } = useSnackBar();
 
@@ -62,11 +63,17 @@ function UserProfileScreen() {
                         <TopBar backNavigateTo="home" screenName="My Profile" />
                         <div className="userInfoContainer">
                             <Avatar src="/images/avatar.png" />
-                            <div className="userInfo">
-                                <h4>{user?.userName || "User"}</h4>
-                                <h5>{user?.userEmail || "not provided"}</h5>
+                            {user !== null ? (<div className="userInfo">
+                                <h4>{user?.userName}</h4>
+                                <h5>{user?.userEmail}</h5>
 
-                            </div>
+                            </div>) : (
+                                <div className="userInfo" style={{ width: '100px' }}>
+                                    <h4><Skeleton sx={{ width: '60%' }} /></h4>
+                                    <h5><Skeleton /></h5>
+
+                                </div>
+                            )}
                         </div>
                         <div className="userOptions">
                             <div className="option">

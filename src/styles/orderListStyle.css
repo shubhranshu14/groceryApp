@@ -9,4 +9,14 @@
 .noOrderHolder img {
   width: 300px;
 }
-
+.inProgressLabel {
+  color: rgb(61, 61, 61);
+  background-color: rgb(179, 179, 179);
+  padding: 2px;
+  border: 1px solid gray;
+  border-radius: 4px;
+}
+.inProgressLabel p {
+  font-size: 10px;
+  font-weight: bold;
+}

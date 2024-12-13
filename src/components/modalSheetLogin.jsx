@@ -118,6 +118,14 @@ export default function ModalSheetLogin({ setIsLoginModalOpen, closedFromProfile
                 userUid: res?.data?._id,
                 userEmail: res?.data?.email || "",
                 userNumber: res?.data?.phoneNumber || "",
+                userAddress: res?.data?.address || {
+                    place: '',
+                    coordinates: {
+                        latitude: null,
+                        longitude: null
+                    }
+                }
+
             });
             setOpen(false);
 
@@ -270,7 +278,7 @@ export default function ModalSheetLogin({ setIsLoginModalOpen, closedFromProfile
             }}
         >
             <animated.div style={springProps} className="modal-sheet">
-                <div style={{ padding: '20px 10px', height: "460px" }}>
+                <div style={{ padding: '20px 10px', height: "380px" }}>
                     <div className='itemDetail' style={{ flexDirection: "column", alignItems: "center" }}>
                         <div className='itemDescription' style={{ textAlign: "center" }}>
                             <Typography variant="h6" sx={{ fontSize: "18px" }}>
@@ -420,10 +428,10 @@ export default function ModalSheetLogin({ setIsLoginModalOpen, closedFromProfile
                         )
                     }
 
-                    <Divider>or</Divider>
+                    {/* <Divider>or</Divider>
                     <Button variant='outlined' sx={{ width: "100%", marginTop: "10px", p: 1.2, justifyContent: "space-around" }} onClick={handleGoogle} endIcon={<Google />}>
                         Continue With Google
-                    </Button>
+                    </Button> */}
                 </div>
             </animated.div>
 

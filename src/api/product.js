@@ -1,5 +1,4 @@
 import { HOST_API } from "../../config.js";
-const authToken = localStorage.getItem("authToken");
 
 // get all products
 export const getProducts = async (productCategory) => {
@@ -61,7 +60,7 @@ export const getProductCategory = async () => {
 
 // place order
 
-export const createOrder = async (orderData) => {
+export const createOrder = async (orderData, authToken) => {
   const url = `${HOST_API}/product/order/create`;
   try {
     const res = await fetch(url, {

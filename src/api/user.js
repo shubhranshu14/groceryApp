@@ -1,7 +1,5 @@
 import { HOST_API } from "../../config.js";
 
-const authToken = localStorage.getItem("authToken");
-
 export const userSignUp = async (userData) => {
   const url = `${HOST_API}/user/signup`;
   try {
@@ -96,7 +94,7 @@ export const getUser = async (authToken) => {
   }
 };
 
-export const updateUserAddress = async (address) => {
+export const updateUserAddress = async (address, authToken) => {
   const url = `${HOST_API}/user/updateAddress`;
   try {
     const response = await fetch(url, {

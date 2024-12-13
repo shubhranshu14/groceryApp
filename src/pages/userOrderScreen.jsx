@@ -22,6 +22,14 @@ function DeliveredLabel() {
     )
 }
 
+function InProgressLabel() {
+    return (
+        <div className="inProgressLabel">
+            <p>Order in Progress</p>
+        </div>
+    )
+}
+
 const formatDate = (isoDate) => {
     return new Date(isoDate).toLocaleString("en-US", {
         year: "numeric",
@@ -127,7 +135,8 @@ function UserOrderScreen() {
                                             <Typography gutterBottom sx={{ fontSize: 12 }}>
                                                 Order # {order._id}
                                             </Typography>
-                                            <DeliveredLabel />
+                                            {/* <DeliveredLabel /> */}
+                                            <InProgressLabel />
                                         </div>
                                         <Typography gutterBottom sx={{ fontSize: 10 }}>
                                             {formatDate(order.createdAt)}
@@ -176,5 +185,5 @@ export default UserOrderScreen;
 
 const sortData = (data) => {
 
-    return orderBy(data, ['createdAt'], ['d']);
+    return orderBy(data, ['createdAt'], ['desc']);
 }

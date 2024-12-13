@@ -3,7 +3,7 @@ const environment = {
     HOST_API: import.meta.env.VITE_LOCAL_API,
   },
   DEV: {
-    HOST_API: import.meta.env.VITE_LOCAL_API,
+    HOST_API: import.meta.env.VITE_DEV_API,
   },
   LOCAL: {
     HOST_API: import.meta.env.VITE_LOCAL_API,

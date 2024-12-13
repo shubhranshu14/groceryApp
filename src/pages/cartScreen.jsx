@@ -26,6 +26,7 @@ function CartScreen() {
     const [openDialog, setOpenDialog] = useState(false);
     const [orderData, setOrderData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const authToken = localStorage.getItem("authToken");
 
     useEffect(() => {
         setCartSize(cart.length);
@@ -61,7 +62,7 @@ function CartScreen() {
             const orderData = JSON.parse(cart);
 
             try {
-                const res = await createOrder({ orderData, totalPrice });
+                const res = await createOrder({ orderData, totalPrice }, authToken);
                 if (!res.success) {
                     throw new Error(res.message);
                 }
