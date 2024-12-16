@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../App.css';
 import "../styles/home.css";
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -21,7 +21,13 @@ function AppRoutes() {
     const location = useLocation();
     const hideNavBarOnCart = location.pathname === '/cart';
     const { user, login, logout, getLocation, userLocation, userLoggedIn } = useUser();
-
+    const [userHasAddress, setUserHasAddress] = useState(() => {
+        const hasAddress = localStorage.getItem("address added");
+        if (hasAddress) {
+            return JSON.parse(hasAddress);
+        }
+        return false;
+    })
     const { openSnackbar, setOpenSnackbar, snackbarMsg, setSnackbarMsg, snackbarVariant, setSnackbarVariant } = useSnackBar();
 
     useEffect(() => {
@@ -96,7 +102,7 @@ function AppRoutes() {
         <>
             {!hideNavBarOnCart && <NavBar />}
             {!userLoggedIn && <ModalSheetLogin setOpenSnackbar={setOpenSnackbar} setSnackbarMsg={setSnackbarMsg} setSnackbarVariant={setSnackbarVariant} />}
-            {(user?.userAddress?.place == '' && userLoggedIn) && <ModalSheetLocation />}
+            {(!userHasAddress && userLoggedIn) && <ModalSheetLocation />}
             {
                 <SimpleSnackbar
                     openSnackbar={openSnackbar}

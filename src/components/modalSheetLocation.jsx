@@ -136,6 +136,7 @@ export default function ModalSheetLocation({ setIslocationModalOpen }) {
 
                                     }))
                                     setOpen(false);
+                                    localStorage.setItem("address added", true);
                                     if (setIslocationModalOpen) setIslocationModalOpen(false);
                                     setOpenSnackbar(true);
                                     setSnackbarMsg("Address Added");

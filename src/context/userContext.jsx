@@ -55,6 +55,7 @@ export const UserProvider = ({ children }) => {
         localStorage.setItem("userLogedIn", false);
         setUserLoggedIn(false);
         localStorage.removeItem("authToken");
+        localStorage.setItem("address added", false);
         localStorage.removeItem("userAddress");
         localStorage.removeItem("userLocation");
         localStorage.setItem("cart", JSON.stringify([]));

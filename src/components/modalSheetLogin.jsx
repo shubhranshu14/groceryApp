@@ -180,6 +180,11 @@ export default function ModalSheetLogin({ setIsLoginModalOpen, closedFromProfile
                     }
                 }
             });
+            if (res?.data?.address) {
+                localStorage.setItem("address added", true);
+                console.log("123");
+
+            }
             setOpenSnackbar(true);
             setSnackbarMsg("Welcome back! You're logged in.")
             setSnackbarVariant("success");
