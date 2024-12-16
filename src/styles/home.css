@@ -50,8 +50,14 @@
   border-radius: 10px;
 }
 
+.headerDivider span {
+  color: rgb(82, 82, 82);
+  font-weight: 600;
+}
+
 #location {
   flex: 2;
+  align-items: center;
 }
 
 #location h4 {
@@ -168,6 +174,7 @@
 
 .carousel {
   border-radius: 10px;
+  margin-top: 10px !important;
 }
 .carousel .control-dots {
   width: 50% !important;

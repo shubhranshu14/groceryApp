@@ -5,9 +5,30 @@ const UserContext = createContext();
 
 export const useUser = () => useContext(UserContext);
 
+
 export const UserProvider = ({ children }) => {
+    const [userLoggedIn, setUserLoggedIn] = useState(() => {
+        const loginStatus = localStorage.getItem('userLogedIn');
+        if (loginStatus) return JSON.parse(loginStatus);
+        return false;
+    });
     const { setCart } = useCart();
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({
+        userName: '',
+        userPhoto: '',
+        userUid: '',
+        userEmail: '',
+        userNumber: '',
+        userAddress: {
+            place: '',
+            coordinates: {
+                latitude: null,
+                longitude: null
+            }
+        }
+
+    });
+
     const [userLocation, setUserLocation] = useState(() => {
         const location = localStorage.getItem("userLocation");
         if (location) {
@@ -23,18 +44,37 @@ export const UserProvider = ({ children }) => {
 
     const login = (userData) => {
         localStorage.setItem("userLogedIn", true);
-        setUser(userData);
+        setUserLoggedIn(true);
+        setUser((prev) => ({
+            ...prev,
+            ...userData
+        }))
     };
 
     const logout = () => {
         localStorage.setItem("userLogedIn", false);
+        setUserLoggedIn(false);
         localStorage.removeItem("authToken");
         localStorage.removeItem("userAddress");
         localStorage.removeItem("userLocation");
         localStorage.setItem("cart", JSON.stringify([]));
         setCart([]);
         setUserAddress('');
-        setUser(null);
+        setUser({
+            userName: '',
+            userPhoto: '',
+            userUid: '',
+            userEmail: '',
+            userNumber: '',
+            userAddress: {
+                place: '',
+                coordinates: {
+                    latitude: null,
+                    longitude: null
+                }
+            }
+
+        });
     };
 
     const getLocation = (userLocation) => {
@@ -46,7 +86,7 @@ export const UserProvider = ({ children }) => {
     }
 
     return (
-        <UserContext.Provider value={{ user, setUser, login, logout, userLocation, getLocation, userAddress, saveUserAddress }}>
+        <UserContext.Provider value={{ user, setUser, login, logout, userLocation, getLocation, userAddress, saveUserAddress, userLoggedIn }}>
             {children}
         </UserContext.Provider>
     )

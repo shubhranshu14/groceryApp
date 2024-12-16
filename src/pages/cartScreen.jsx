@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../styles/home.css";
 import "../styles/cartStyle.css";
 import "../styles/productListStyle.css";
-import { AddCircle, CloseOutlined, DeleteOutline, LocalMall, Search } from "@mui/icons-material";
-import { InputAdornment, TextField, Grid, Card, CardContent, CardMedia, Typography, IconButton, Box, Rating, colors } from "@mui/material";
+import { AddCircle, CloseOutlined, DeleteOutline, DeliveryDiningOutlined, HomeOutlined, LocalMall, NavigateNextOutlined, PhoneInTalkOutlined, Search } from "@mui/icons-material";
+import { InputAdornment, TextField, Grid, Card, CardContent, CardMedia, Typography, IconButton, Box, Rating, colors, Divider } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { DrinksData, DairyAndBakeryData } from "../assets/mockData/items";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -14,18 +14,22 @@ import AlertDialog from "../components/alertDialog";
 import { useSnackBar } from "../context/snackBarContext";
 import { createOrder } from "../api/product";
 import { LoadingButton } from "@mui/lab";
+import { useUser } from "../context/userContext";
+import ModalSheetPhoneNo from "../components/modalSheetPhoneNo";
 
 function CartScreen() {
     const navigate = useNavigate();
 
     const { cart, setCart, addToCart, increaseQuantity, decreaseQuantity, getQuantity } = useCart();
     const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
+    const { user } = useUser();
     const [cartSize, setCartSize] = useState(() => cart.length);
     const [totalPrice, setTotalPrice] = useState(0);
     const [itemToRemove, setItemToRemove] = useState({});
     const [openDialog, setOpenDialog] = useState(false);
     const [orderData, setOrderData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
     const authToken = localStorage.getItem("authToken");
 
     useEffect(() => {
@@ -54,6 +58,13 @@ function CartScreen() {
     }
 
     const handlePlaceOrder = async () => {
+        if (!user.userNumber) {
+            setOpenSnackbar(true);
+            setSnackbarMsg("Add phone number");
+            setSnackbarVariant("info");
+            setIsPhoneModalOpen(true);
+            return
+        }
         setLoading(true);
         const cart = localStorage.getItem('cart');
         console.log("cart", cart);
@@ -123,6 +134,30 @@ function CartScreen() {
                             </div>
                         ))}
                         <button onClick={handleContinueShopping} className="continueBtn">Continue Shopping</button>
+                        <div className="deliveryInfo">
+                            <div className="deliveryAddress flex">
+                                <HomeOutlined fontSize="small" />
+                                <div>
+                                    <h4>Delivery at</h4>
+                                    <h5>{user.userAddress.place}</h5>
+                                </div>
+                            </div>
+                            <Divider sx={{ mb: '10px', mt: '10px' }} />
+                            <div className="deliveryPhoneNo flex" onClick={() => setIsPhoneModalOpen(true)}>
+                                <PhoneInTalkOutlined fontSize="small" />
+                                <div>
+                                    <h4>{user.userName}, {user.userNumber ? `+91-${user.userNumber}` : 'Add number'}</h4>
+                                </div>
+                                <NavigateNextOutlined />
+                            </div>
+                            <Divider sx={{ mb: '10px', mt: '10px' }} />
+                            <div className="deliveryCharge flex">
+                                <DeliveryDiningOutlined fontSize="small" />
+                                <div>
+                                    <h4>Get Free Delivery on this order</h4>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="cheackout">
@@ -142,6 +177,7 @@ function CartScreen() {
                             <h4>₹{totalPrice}</h4>
                         </div>
                         <LoadingButton loading={loading} variant="contained" onClick={handlePlaceOrder} className="orderBtn">Place Order</LoadingButton>
+                        <ModalSheetPhoneNo isPhoneModalOpen={isPhoneModalOpen} setIsPhoneModalOpen={setIsPhoneModalOpen} />
                     </div>
                 </>
             )}

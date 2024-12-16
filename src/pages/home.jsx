@@ -20,12 +20,11 @@ import UserOrderScreen from './userOrderScreen';
 function AppRoutes() {
     const location = useLocation();
     const hideNavBarOnCart = location.pathname === '/cart';
-    const { user, login, logout, getLocation, userLocation } = useUser();
-    const userLoggedIn = JSON.parse(localStorage.getItem("userLogedIn"));
+    const { user, login, logout, getLocation, userLocation, userLoggedIn } = useUser();
+
     const { openSnackbar, setOpenSnackbar, snackbarMsg, setSnackbarMsg, snackbarVariant, setSnackbarVariant } = useSnackBar();
 
     useEffect(() => {
-        const userLoggedIn = JSON.parse(localStorage.getItem("userLogedIn"));
 
         if (userLoggedIn) {
             const authToken = localStorage.getItem('authToken');
@@ -91,11 +90,13 @@ function AppRoutes() {
 
     }, []);
 
+
+
     return (
         <>
             {!hideNavBarOnCart && <NavBar />}
-            {(!user && !userLoggedIn) && <ModalSheetLogin setOpenSnackbar={setOpenSnackbar} setSnackbarMsg={setSnackbarMsg} setSnackbarVariant={setSnackbarVariant} />}
-            {((user && user?.userAddress?.place == '') && userLoggedIn) && <ModalSheetLocation />}
+            {!userLoggedIn && <ModalSheetLogin setOpenSnackbar={setOpenSnackbar} setSnackbarMsg={setSnackbarMsg} setSnackbarVariant={setSnackbarVariant} />}
+            {(user?.userAddress?.place == '' && userLoggedIn) && <ModalSheetLocation />}
             {
                 <SimpleSnackbar
                     openSnackbar={openSnackbar}

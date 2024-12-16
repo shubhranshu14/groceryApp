@@ -18,7 +18,7 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
 
     const { cart, addToCart, decreaseQuantity, getQuantity } = useCart();
     const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
-    const { user } = useUser();
+    const { user, userLoggedIn } = useUser();
 
     const looseItem = true;
 
@@ -46,10 +46,10 @@ export default function ModalSheetLooseItem({ currItemSize, item }) {
     };
 
     const handleCheckUserBeforeAddItem = () => {
-        if (user && user.userAddress?.place != '') {
+        if (userLoggedIn && user.userAddress?.place != '') {
             handleAddOrRemove();
             console.log("user from cart", user)
-        } else if (user && user.userAddress?.place == '') {
+        } else if (userLoggedIn && user.userAddress?.place == '') {
             setOpenSnackbar(true);
             setSnackbarMsg("Need to add your location!");
             setSnackbarVariant("info");

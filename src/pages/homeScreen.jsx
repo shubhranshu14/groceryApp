@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import "../styles/home.css";
-import { Search, LocalMall, LocationOnOutlined } from "@mui/icons-material";
-import { InputAdornment, Skeleton, TextField } from "@mui/material";
+import { Search, LocalMall, LocationOnOutlined, FmdGood } from "@mui/icons-material";
+import { Divider, InputAdornment, Skeleton, TextField } from "@mui/material";
 import CarouselComponent from "../components/carousel";
 import { useCart } from "../context/cartContext";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import { getProductCategory } from "../api/product";
 // Component for displaying location
 const LocationSection = ({ user, handleGetLocation }) => (
     <div id="location" className="flex" onClick={handleGetLocation}>
+        <FmdGood sx={{ color: '#ff5454' }} />
         {user?.userAddress?.place ? (
             <div>
                 <h4>{user.userAddress.place}</h4>
@@ -22,7 +23,7 @@ const LocationSection = ({ user, handleGetLocation }) => (
         ) : (
             <h4>Add Your Location</h4>
         )}
-        <LocationOnOutlined />
+
     </div>
 );
 
@@ -117,7 +118,8 @@ function HomeScreen() {
 
 
             <div className="category margin-top20">
-                <h4>Category</h4>
+
+                <Divider className="headerDivider">EXPLORE</Divider>
                 {loadingCategory ? (
                     <div className="flex itemContainer">
                         {
@@ -144,7 +146,7 @@ function HomeScreen() {
             </div>
 
             <div className="quickBites margin-top20">
-                <h4>What you need today</h4>
+                <Divider className="headerDivider">WHAT YOU NEED TODAY`</Divider>
                 <CarouselComponent>
                     {images.map((src, index) => (
                         <div key={index} className="slideDiv">

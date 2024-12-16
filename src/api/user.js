@@ -123,3 +123,33 @@ export const updateUserAddress = async (address, authToken) => {
     };
   }
 };
+export const updateUserPhoneNumber = async (phoneNumber, authToken) => {
+  const url = `${HOST_API}/user/updatePhoneNumber`;
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify(phoneNumber),
+    });
+
+    if (!response.ok) {
+      const resultError = await response.json();
+      throw new Error(resultError.message);
+    }
+
+    const result = await response.json();
+    return {
+      success: true,
+      data: result?.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message || "An unexpected error occurred",
+    };
+  }
+};
+2;

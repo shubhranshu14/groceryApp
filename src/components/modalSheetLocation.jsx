@@ -198,7 +198,7 @@ export default function ModalSheetLocation({ setIslocationModalOpen }) {
     }, [isLoaded, mapRef.current, currentCorrdinate]); // Add both dependencies to trigger when either changes
 
 
-    const mapContainerStyle = { width: '80%', height: '80%' };
+    const mapContainerStyle = { width: '80%', height: '94%', borderRadius: '8px', boxShadow: '0px 0px 10px grey' };
 
     // Define map options
     const mapOptions = {
@@ -292,7 +292,7 @@ export default function ModalSheetLocation({ setIslocationModalOpen }) {
                         ) : (
                             <Skeleton animation="wave" variant="rectangular" width="100%" height="100%" />
                         )}
-                        {currentCorrdinate.latitude !== null && <LoadingButton loading={loading} variant='contained' disabled={locationBtnDisabled} onClick={handleUseCurrentLocation} >Confirm</LoadingButton>}
+                        {currentCorrdinate.latitude !== null && <LoadingButton loading={loading} variant='contained' disabled={locationBtnDisabled} onClick={handleUseCurrentLocation} sx={{ width: '100%' }} >Confirm</LoadingButton>}
 
                     </div>
 

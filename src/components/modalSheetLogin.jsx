@@ -114,10 +114,8 @@ export default function ModalSheetLogin({ setIsLoginModalOpen, closedFromProfile
             localStorage.setItem("authToken", res?.data?.token);
             login({
                 userName: res?.data?.userName,
-                userPhoto: res?.data?.photoURL || "",
                 userUid: res?.data?._id,
-                userEmail: res?.data?.email || "",
-                userNumber: res?.data?.phoneNumber || "",
+                userEmail: res?.data?.email,
                 userAddress: res?.data?.address || {
                     place: '',
                     coordinates: {
@@ -125,7 +123,6 @@ export default function ModalSheetLogin({ setIsLoginModalOpen, closedFromProfile
                         longitude: null
                     }
                 }
-
             });
             setOpen(false);
 

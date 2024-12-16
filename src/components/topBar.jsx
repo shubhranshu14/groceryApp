@@ -6,7 +6,7 @@ import { LocalMall } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/cartContext";
 
-function TopBar({ screenName, backNavigateTo, hideCartBtn }) {
+function TopBar({ screenName, backNavigateTo, hideBackBtn, hideCartBtn }) {
     const navigate = useNavigate();
     const { cart } = useCart();
     const backToTab = localStorage.getItem("backToTab");
@@ -19,12 +19,15 @@ function TopBar({ screenName, backNavigateTo, hideCartBtn }) {
 
     return (
         <div className="backAndCartContainer">
-            <div id="back" onClick={() => {
-                navigate(`/${backToTab === 'home' ? "" : backToTab}`)
-                // localStorage.setItem("tabName", backNavigateTo);
-            }}>
-                <h2 style={{ fontFamily: "Bebas Neue, sans-serif", fontWeight: "bold" }}>BACK</h2>
-            </div>
+            {!hideBackBtn || false ?
+                <div id="back" onClick={() => {
+                    navigate(`/${backToTab === 'home' ? "" : backToTab}`)
+                    // localStorage.setItem("tabName", backNavigateTo);
+                }}>
+                    <h2 style={{ fontFamily: "Bebas Neue, sans-serif", fontWeight: "bold" }}>BACK</h2>
+                </div> :
+                <div id="hiddenDiv"></div>
+            }
             <div id="item">
                 <h4 style={{ fontWeight: "bold", fontSize: "20px" }}>{screenName}</h4>
             </div>

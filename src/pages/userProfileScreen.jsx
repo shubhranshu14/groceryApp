@@ -60,7 +60,7 @@ function UserProfileScreen() {
                 userLoggIn ? (
                     <>
                         {/* Back button and cart items */}
-                        <TopBar backNavigateTo="home" screenName="My Profile" />
+                        <TopBar hideBackBtn={true} screenName="My Profile" />
                         <div className="userInfoContainer">
                             <Avatar src="/images/avatar.png" />
                             {user !== null ? (<div className="userInfo">
@@ -68,9 +68,9 @@ function UserProfileScreen() {
                                 <h5>{user?.userEmail}</h5>
 
                             </div>) : (
-                                <div className="userInfo" style={{ width: '100px' }}>
-                                    <h4><Skeleton sx={{ width: '60%' }} /></h4>
-                                    <h5><Skeleton /></h5>
+                                <div className="userInfo" style={{ width: '200px' }}>
+                                    <h4><Skeleton animation="wave" sx={{ width: '60%' }} /></h4>
+                                    <h5><Skeleton animation="wave" /></h5>
 
                                 </div>
                             )}
