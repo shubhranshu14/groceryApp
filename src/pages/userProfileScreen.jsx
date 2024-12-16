@@ -63,7 +63,7 @@ function UserProfileScreen() {
                         <TopBar hideBackBtn={true} screenName="My Profile" />
                         <div className="userInfoContainer">
                             <Avatar src="/images/avatar.png" />
-                            {user !== null ? (<div className="userInfo">
+                            {user.userName !== '' ? (<div className="userInfo">
                                 <h4>{user?.userName}</h4>
                                 <h5>{user?.userEmail}</h5>
 
