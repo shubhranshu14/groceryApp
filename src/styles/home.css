@@ -118,6 +118,68 @@
 .searchBar {
   width: 100%;
   margin: 10px 0;
+  position: relative;
+}
+.animatedSearchText {
+  position: absolute;
+  z-index: 9;
+  left: 14px;
+  height: 18px; /* Match the line-height of the text */
+  /* overflow: hidden; */
+  width: 50%;
+  margin-top: 20px;
+}
+.searchText {
+  position: absolute;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  color: rgb(153, 153, 153);
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, transform 1s ease-in-out;
+}
+#searchText-1 {
+  animation: searchTextAnimation 7500ms ease-in-out infinite;
+  animation-delay: 0ms;
+}
+#searchText-2 {
+  animation: searchTextAnimation 7500ms ease-in-out infinite;
+  animation-delay: 1500ms;
+}
+#searchText-3 {
+  animation: searchTextAnimation 7500ms ease-in-out infinite;
+  animation-delay: 3000ms;
+}
+#searchText-4 {
+  animation: searchTextAnimation 7500ms ease-in-out infinite;
+  animation-delay: 4500ms;
+}
+#searchText-5 {
+  animation: searchTextAnimation 7500ms ease-in-out infinite;
+  animation-delay: 6000ms;
+}
+
+@keyframes searchTextAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
 
 .navBar {

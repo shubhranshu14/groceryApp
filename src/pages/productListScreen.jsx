@@ -9,6 +9,7 @@ import TopBar from "../components/topBar";
 import ModalSheetBottom from "../components/modalSheet";
 import ModalSheetLooseItem from "../components/modalSheetLooseItem";
 import { getProducts } from "../api/product";
+import NotFound from "./notFound";
 
 function ProductListScreen() {
     const navigate = useNavigate();
@@ -95,41 +96,44 @@ function ProductListScreen() {
                     </Grid>
                 ) : (
                     <Grid container spacing={2} justifyContent="center">
-                        {itemsList.map((product) => {
-                            const selectedSize = product.itemSizes[0].size;
+                        {itemsList.length === 0 ?
+                            <NotFound />
+                            :
+                            (itemsList.map((product) => {
+                                const selectedSize = product.itemSizes[0].size;
 
-                            return (
+                                return (
 
-                                <Grid item key={product._id} xs={6} sm={6} md={4}>
-                                    <Card sx={{ height: "100%", display: 'flex', flexDirection: 'column', flex: 1 }}>
-                                        <CardMedia
-                                            component="img"
-                                            height="140"
-                                            image={product.itemImageURL}
-                                            alt={product.itemName}
-                                            sx={{ objectFit: 'contain', padding: '8px' }}
-                                        />
-                                        <CardContent sx={{ padding: '8px' }}>
-                                            <Typography gutterBottom variant="p" component="div" noWrap>
-                                                {product.itemName}
-                                            </Typography>
-                                            {
-                                                product.itemBasePricePerKg ?
-                                                    <ModalSheetLooseItem
-                                                        currItemSize={selectedSize}
-                                                        item={product}
-                                                    />
-                                                    :
-                                                    <ModalSheetBottom
-                                                        currItemSize={selectedSize}
-                                                        item={product}
-                                                    />
-                                            }
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            );
-                        })}
+                                    <Grid item key={product._id} xs={6} sm={6} md={4}>
+                                        <Card sx={{ height: "100%", display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                            <CardMedia
+                                                component="img"
+                                                height="140"
+                                                image={product.itemImageURL}
+                                                alt={product.itemName}
+                                                sx={{ objectFit: 'contain', padding: '8px' }}
+                                            />
+                                            <CardContent sx={{ padding: '8px' }}>
+                                                <Typography gutterBottom variant="p" component="div" noWrap>
+                                                    {product.itemName}
+                                                </Typography>
+                                                {
+                                                    product.itemBasePricePerKg ?
+                                                        <ModalSheetLooseItem
+                                                            currItemSize={selectedSize}
+                                                            item={product}
+                                                        />
+                                                        :
+                                                        <ModalSheetBottom
+                                                            currItemSize={selectedSize}
+                                                            item={product}
+                                                        />
+                                                }
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                );
+                            }))}
                     </Grid>
                 )
             }

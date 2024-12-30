@@ -45,10 +45,26 @@ function CategoryScreen() {
     return (
         <div className="home">
 
-            <div className="searchBar" style={{ width: "100%", margin: "10px 0" }}>
+            <div className="searchBar" style={{ width: "100%", margin: "10px 0" }} onClick={() => navigate('/s')}>
+                <div className="animatedSearchText">
+                    <div id="searchText-1" className="searchText">
+                        Search "bread"
+                    </div>
+                    <div id="searchText-2" className="searchText">
+                        Search "milk"
+                    </div>
+                    <div id="searchText-3" className="searchText">
+                        Search "atta"
+                    </div>
+                    <div id="searchText-4" className="searchText">
+                        Search "dal"
+                    </div>
+                    <div id="searchText-5" className="searchText">
+                        Search "tea"
+                    </div>
+                </div>
                 <TextField
                     id="outlined-start-adornment"
-                    placeholder="Search"
                     sx={{
                         '& .MuiOutlinedInput-root': {
                             borderRadius: '10px',

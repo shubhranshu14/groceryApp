@@ -16,6 +16,7 @@ import ModalSheetLocation from '../components/modalSheetLocation';
 import { useSnackBar } from '../context/snackBarContext';
 import SimpleSnackbar from '../components/snackBar';
 import UserOrderScreen from './userOrderScreen';
+import SearchScreen from './searchScreen';
 
 function AppRoutes() {
     const location = useLocation();
@@ -28,6 +29,8 @@ function AppRoutes() {
         }
         return false;
     })
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showLocationModal, setShowLocationModal] = useState(false);
     const { openSnackbar, setOpenSnackbar, snackbarMsg, setSnackbarMsg, snackbarVariant, setSnackbarVariant } = useSnackBar();
 
     useEffect(() => {
@@ -96,13 +99,38 @@ function AppRoutes() {
 
     }, []);
 
+    useEffect(() => {
+        // Show login modal with a 2-second delay
+        if (!userLoggedIn) {
+            const loginTimeout = setTimeout(() => {
+                setShowLoginModal(true);
+            }, 6000);
+            return () => clearTimeout(loginTimeout); // Cleanup the timeout on unmount
+        }
+        const hasAddress = localStorage.getItem("address added");
+        if (hasAddress) {
+            setUserHasAddress(JSON.parse(hasAddress));
+        }
+
+    }, [userLoggedIn]);
+
+    useEffect(() => {
+        // Show location modal with a 2-second delay after user login
+        if (userLoggedIn && !userHasAddress) {
+            const locationTimeout = setTimeout(() => {
+                setShowLocationModal(true);
+            }, 2000);
+            return () => clearTimeout(locationTimeout); // Cleanup the timeout on unmount
+        }
+    }, [userLoggedIn, userHasAddress]);
+
 
 
     return (
         <>
             {!hideNavBarOnCart && <NavBar />}
-            {!userLoggedIn && <ModalSheetLogin setOpenSnackbar={setOpenSnackbar} setSnackbarMsg={setSnackbarMsg} setSnackbarVariant={setSnackbarVariant} />}
-            {(!userHasAddress && userLoggedIn) && <ModalSheetLocation />}
+            {showLoginModal && <ModalSheetLogin setOpenSnackbar={setOpenSnackbar} setSnackbarMsg={setSnackbarMsg} setSnackbarVariant={setSnackbarVariant} />}
+            {showLocationModal && <ModalSheetLocation />}
             {
                 <SimpleSnackbar
                     openSnackbar={openSnackbar}
@@ -118,6 +146,7 @@ function AppRoutes() {
                 <Route path="/cart" element={<CartScreen />} />
                 <Route path="/user" element={<UserProfileScreen />} />
                 <Route path="/user/myOrder" element={<UserOrderScreen />} />
+                <Route path="/s" element={<SearchScreen />} />
             </Routes>
         </>
     );

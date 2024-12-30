@@ -16,7 +16,23 @@
   border: 1px solid gray;
   border-radius: 4px;
 }
-.inProgressLabel p {
+.deliveredLabel {
+  color: #37aa25;
+  background-color: #daffbd;
+  padding: 2px;
+  border: 1px solid #37aa25;
+  border-radius: 4px;
+}
+.shippedLabel {
+  color: rgb(87, 104, 254);
+  background-color: rgb(127, 214, 255);
+  padding: 2px;
+  border: 1px solid rgb(87, 104, 254);
+  border-radius: 4px;
+}
+.inProgressLabel p,
+.deliveredLabel p,
+.shippedLabel p {
   font-size: 10px;
   font-weight: bold;
 }

@@ -28,6 +28,35 @@ export const getProducts = async (productCategory) => {
   }
 };
 
+//get product by search bar
+export const getProductBySearch = async (searchKeyword) => {
+  try {
+    const url = `${HOST_API}/product/search?searchKeyword=${searchKeyword}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const responseError = await res.json();
+      throw new Error(responseError.message);
+    }
+
+    const result = await res.json();
+    return {
+      success: true,
+      data: result?.data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.message || "An unexpected error occurred",
+    };
+  }
+};
+
 // get all product category
 export const getProductCategory = async () => {
   try {

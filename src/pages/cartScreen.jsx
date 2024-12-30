@@ -71,9 +71,10 @@ function CartScreen() {
 
         if (cart) {
             const orderData = JSON.parse(cart);
+            const orderStatus = 'order_in_process';
 
             try {
-                const res = await createOrder({ orderData, totalPrice }, authToken);
+                const res = await createOrder({ orderData, totalPrice, orderStatus }, authToken);
                 if (!res.success) {
                     throw new Error(res.message);
                 }

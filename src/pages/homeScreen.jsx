@@ -39,7 +39,7 @@ function HomeScreen() {
     const navigate = useNavigate();
     const { cart } = useCart();
     const { setOpenSnackbar, setSnackbarMsg, setSnackbarVariant } = useSnackBar();
-    const { user } = useUser();
+    const { user, userLoggedIn } = useUser();
 
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -66,7 +66,7 @@ function HomeScreen() {
     }, []);
 
     const handleGetLocation = () => {
-        if (!user) {
+        if (!userLoggedIn) {
             setIsLoginModalOpen(true);
             setOpenSnackbar(true);
             setSnackbarMsg("Need to login first");
@@ -94,10 +94,27 @@ function HomeScreen() {
             {isLocationModalOpen && <ModalSheetLocation setIslocationModalOpen={setIsLocationModalOpen} />}
             {isLoginModalOpen && <ModalSheetLogin setIsLoginModalOpen={setIsLoginModalOpen} />}
 
-            <div className="searchBar">
+            <div className="searchBar" onClick={() => navigate('/s')}>
+                <div className="animatedSearchText">
+                    <div id="searchText-1" className="searchText">
+                        Search "bread"
+                    </div>
+                    <div id="searchText-2" className="searchText">
+                        Search "milk"
+                    </div>
+                    <div id="searchText-3" className="searchText">
+                        Search "atta"
+                    </div>
+                    <div id="searchText-4" className="searchText">
+                        Search "dal"
+                    </div>
+                    <div id="searchText-5" className="searchText">
+                        Search "tea"
+                    </div>
+                </div>
                 <TextField
                     id="outlined-start-adornment"
-                    placeholder="Search"
+
                     sx={{
                         "& .MuiOutlinedInput-root": { borderRadius: "10px", backgroundColor: "white" },
                         width: "100%",
@@ -110,6 +127,7 @@ function HomeScreen() {
                         ),
                     }}
                 />
+
             </div>
 
             <div className="imageTab1">
@@ -146,7 +164,7 @@ function HomeScreen() {
             </div>
 
             <div className="quickBites margin-top20">
-                <Divider className="headerDivider">WHAT YOU NEED TODAY`</Divider>
+                <Divider className="headerDivider">WHAT YOU NEED TODAY</Divider>
                 <CarouselComponent>
                     {images.map((src, index) => (
                         <div key={index} className="slideDiv">

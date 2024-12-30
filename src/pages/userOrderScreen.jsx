@@ -16,8 +16,16 @@ import { useUser } from "../context/userContext";
 
 function DeliveredLabel() {
     return (
-        <div style={{ color: '#37aa25', backgroundColor: '#daffbd', border: '1px solid #37aa25', padding: '2px', borderRadius: '4px' }}>
-            <p style={{ fontSize: '10px', fontWeight: 'bold' }}>DELIVERED</p>
+        <div className="deliveredLabel">
+            <p>DELIVERED</p>
+        </div>
+    )
+}
+
+function ShippedLabel() {
+    return (
+        <div className="shippedLabel">
+            <p>SHIPPED</p>
         </div>
     )
 }
@@ -25,7 +33,7 @@ function DeliveredLabel() {
 function InProgressLabel() {
     return (
         <div className="inProgressLabel">
-            <p>Order in Progress</p>
+            <p>Order Placed</p>
         </div>
     )
 }
@@ -135,8 +143,9 @@ function UserOrderScreen() {
                                             <Typography gutterBottom sx={{ fontSize: 12 }}>
                                                 Order # {order._id}
                                             </Typography>
-                                            {/* <DeliveredLabel /> */}
-                                            <InProgressLabel />
+                                            {
+                                                order.orderStatus === 'order_in_process' ? <InProgressLabel /> : order.orderStatus === 'order_delivered' ? <DeliveredLabel /> : <ShippedLabel />
+                                            }
                                         </div>
                                         <Typography gutterBottom sx={{ fontSize: 10 }}>
                                             {formatDate(order.createdAt)}
